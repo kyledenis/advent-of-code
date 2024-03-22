@@ -1,25 +1,27 @@
-// Kyle DENIS - 21022655 - Advent of Code 2023 Day 1: Trebuchet?! v.4
+// Kyle DENIS - 21022655 - Advent of Code 2023 Day 1: Trebuchet?!
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <filesystem>
 
+using namespace std; // Stops the need to use std:: prefix
+
 int main() {
-    std::string inputFileName = "puzzle-input.txt";
+    string inputFileName = "puzzle-input.txt";
 
     // Check if the file exists
-    if (!std::filesystem::exists(inputFileName)) {
-        std::cerr << "Error: file '" << inputFileName << "' not found." << std::endl;
+    if (!filesystem::exists(inputFileName)) {
+        cerr << "Error: file '" << inputFileName << "' not found." << endl;
         return 1;
     }
 
-    std::ifstream file(inputFileName);
+    ifstream file(inputFileName);
     if (!file) {
-        std::cerr << "Error: file '" << inputFileName << "' cannot be opened." << std::endl;
+        cerr << "Error: file '" << inputFileName << "' cannot be opened." << endl;
         return 1;
     }
 
-    std::string line;
+    string line;
     int sum = 0;
     const int base = 10;
 
@@ -54,7 +56,7 @@ int main() {
         }
     }
 
-    std::cout << "The sum of all the calibration values is: " << sum << std::endl;
+    cout << "The sum of all the calibration values is: " << sum << endl;
 
     return 0;
 }
