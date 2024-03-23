@@ -23,7 +23,7 @@ int main() {
 
     string line;
     int sum = 0;
-    const int base = 10;
+    const int BASE = 10;
 
     while (getline(file, line)) {
         if (line.empty()) {
@@ -50,7 +50,7 @@ int main() {
         }
 
         if (firstDigit != -1 && lastDigit != -1) {
-            int calibrationValue = firstDigit * base + lastDigit;
+            int calibrationValue = firstDigit * BASE + lastDigit;
             sum += calibrationValue;
 
         }
