@@ -10,12 +10,12 @@
 
 using namespace std;
 
-// Find the minimum number of cubes required for each color in a game
-unordered_map<string, int> findMinimumCubes(const vector<unordered_map<string, int>> &subsets) {
+// Find the minimum number of cubes required for each colour in a game
+unordered_map<string, int> findMinimumCubes(const vector<unordered_map<string, int>>& subsets) {
     unordered_map<string, int> minimumCubes;
 
-    for (const auto &subset : subsets) {
-        for (const auto &[colour, count] : subset) {
+    for (const auto& subset : subsets) {
+        for (const auto& [colour, count] : subset) {
             minimumCubes[colour] = max(minimumCubes[colour], count);
         }
     }
@@ -24,18 +24,18 @@ unordered_map<string, int> findMinimumCubes(const vector<unordered_map<string, i
 }
 
 // Calculate the power of a set of cubes
-int calculatePower(const unordered_map<string, int> &cubes) {
+int calculatePower(const unordered_map<string, int>& cubes) {
     int power = 1;
 
-    for (const auto &[colour, count] : cubes) {
+    for (const auto& [colour, count] : cubes) {
         power *= count;
     }
 
     return power;
 }
 
-// Parse a subset string and return a map of cube colors and counts
-unordered_map<string, int> parseSubset(const string &subset) {
+// Parse a subset string and return a map of cube colours and counts
+unordered_map<string, int> parseSubset(const string& subset) {
     unordered_map<string, int> colourCounts;
     istringstream subsetStream(subset);
     string cube;
@@ -51,6 +51,29 @@ unordered_map<string, int> parseSubset(const string &subset) {
     return colourCounts;
 }
 
+// Process a single game and return the power of the minimum set of cubes
+int processGame(const string& game) {
+    istringstream gameStream(game);
+    string gameInfo;
+    vector<unordered_map<string, int>> subsets;
+
+    // Extract Game ID
+    getline(gameStream, gameInfo, ':');
+
+    // Extract subsets of cubes
+    while (getline(gameStream, gameInfo, ';')) {
+        subsets.push_back(parseSubset(gameInfo));
+    }
+
+    // Find the minimum number of cubes required for each colour
+    unordered_map<string, int> minimumCubes = findMinimumCubes(subsets);
+
+    // Calculate the power of the minimum set of cubes
+    int power = calculatePower(minimumCubes);
+
+    return power;
+}
+
 int main() {
     vector<string> gameData;
     ifstream inputFile("./day02-input.txt");
@@ -63,31 +86,15 @@ int main() {
         }
         inputFile.close();
     } else {
-        cout << "Unable to open the input file." << endl;
+        cerr << "Unable to open the input file." << endl;
         return 1;
     }
 
     int sumOfPowers = 0;
 
-    // Process each game
-    for (const auto &game : gameData) {
-        istringstream gameStream(game);
-        string gameInfo;
-        vector<unordered_map<string, int>> subsets;
-
-        // Extract Game ID
-        getline(gameStream, gameInfo, ':');
-
-        // Extract subsets of cubes
-        while (getline(gameStream, gameInfo, ';')) {
-            subsets.push_back(parseSubset(gameInfo));
-        }
-
-        // Find the minimum number of cubes required for each color
-        unordered_map<string, int> minimumCubes = findMinimumCubes(subsets);
-
-        // Calculate the power of the minimum set of cubes and add it to the sum
-        int power = calculatePower(minimumCubes);
+    // Process each game and accumulate the sum of powers
+    for (const auto& game : gameData) {
+        int power = processGame(game);
         sumOfPowers += power;
     }
 
