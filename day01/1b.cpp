@@ -68,7 +68,7 @@ int main() {
     ifstream file(filename);
 
     if (!file.is_open()) {
-        cout << "Failed to open file: " << filename << endl;
+        cerr << "Failed to open file: " << filename << endl;
         return 1;
     }
 
