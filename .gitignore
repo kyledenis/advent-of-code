@@ -32,6 +32,9 @@
 *.out
 *.app
 
+# Miscellaneous
+*.dSYM
+
 # ---- VisualStudioCode ----
 .vscode/*
 !.vscode/settings.json
