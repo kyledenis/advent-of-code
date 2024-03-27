@@ -1,15 +1,18 @@
 // Kyle DENIS - 21022655 - Advent of Code 2023 Day 2: Cube Conundrum
+// Example answer: 8
+// Input answer: 2348
+
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <vector>
 #include <unordered_map>
 
-using namespace std; // Stops the need to use std:: prefix
+using namespace std;
 
 // Check if game is possible given the available cubes
-bool isGamePossible(const vector<unordered_map<string, int>> &subsets, int redCubes, int greenCubes, int blueCubes) {
-    for (const auto &subset : subsets) {
+bool isGamePossible(const vector<unordered_map<string, int>>& subsets, int redCubes, int greenCubes, int blueCubes) {
+    for (const auto& subset : subsets) {
         if (subset.count("red") > 0 && subset.at("red") > redCubes)
             return false;
         if (subset.count("green") > 0 && subset.at("green") > greenCubes)
@@ -21,7 +24,7 @@ bool isGamePossible(const vector<unordered_map<string, int>> &subsets, int redCu
 }
 
 // Parse a subset string and return a map of cube colors and counts
-unordered_map<string, int> parseSubset(const string &subset) {
+unordered_map<string, int> parseSubset(const string& subset) {
     unordered_map<string, int> colourCounts;
     istringstream subsetStream(subset);
     string cube;
@@ -38,7 +41,7 @@ unordered_map<string, int> parseSubset(const string &subset) {
 
 int main() {
     vector<string> gameData;
-    ifstream inputFile("day02-input.txt");
+    ifstream inputFile("./day02-input.txt");
 
     // Read game data from input file
     if (inputFile.is_open()) {
@@ -48,7 +51,7 @@ int main() {
         }
         inputFile.close();
     } else {
-        cout << "Unable to open the input file." << endl;
+        cerr << "Unable to open the input file." << endl;
         return 1;
     }
 
@@ -58,7 +61,7 @@ int main() {
     int sumOfPossibleGameIDs = 0;
 
     // Process each game
-    for (const auto &game : gameData) {
+    for (const auto& game : gameData) {
         istringstream gameStream(game);
         string gameInfo;
         vector<unordered_map<string, int>> subsets;
