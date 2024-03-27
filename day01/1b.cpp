@@ -1,20 +1,22 @@
 // Kyle DENIS - 21022655 - Advent of Code 2023 Day 1 - Part 2: Trebuchet?!
+// Example answer: 281
+// Input answer: 54504
+
 #include <iostream>
 #include <string>
-#include <vector>
 #include <unordered_map>
 #include <fstream>
 
-using namespace std; // Stops the need to use std:: prefix
+using namespace std;
 
-unordered_map<string, int> digit_map = {
+unordered_map<string, int> digitMap = {
     {"zero", 0}, {"one", 1}, {"two", 2}, {"three", 3}, {"four", 4},
     {"five", 5}, {"six", 6}, {"seven", 7}, {"eight", 8}, {"nine", 9}
 };
 
 // Find digit and convert if necessary
-int get_digit(const string &word) {
-    for (const auto &entry : digit_map) {
+int getDigit(const string &word) {
+    for (const auto &entry : digitMap) {
         if (word.find(entry.first) == 0) {
             return entry.second;
         }
@@ -27,8 +29,42 @@ int get_digit(const string &word) {
     return -1;
 }
 
+void findFirstDigit(const string &line, int &firstDigit) {
+    for (int i = 0; i < line.length(); ++i) {
+        string word;
+        for (int j = i; j < line.length(); ++j) {
+            word += line[j];
+            cout << "  Word: " << word << endl;
+            int digit = getDigit(word);
+            if (digit != -1) {
+                firstDigit = digit;
+                cout << "  Detected digit: " << word << " -> " << firstDigit << endl;
+                i = j;  // Skip characters already processed
+                return;
+            }
+        }
+    }
+}
+
+void findLastDigit(const string &line, int &lastDigit) {
+    for (int i = line.length() - 1; i >= 0; --i) {
+        string word;
+        for (int j = i; j >= 0; --j) {
+            word = line[j] + word;
+            cout << "  Word: " << word << endl;
+            int digit = getDigit(word);
+            if (digit != -1) {
+                lastDigit = digit;
+                cout << "  Detected digit: " << word << " -> " << lastDigit << endl;
+                i = j - 1;  // Skip the characters already processed
+                return;
+            }
+        }
+    }
+}
+
 int main() {
-    string filename = "puzzle-input.txt";
+    string filename = "./day01-input.txt";
     ifstream file(filename);
 
     if (!file.is_open()) {
@@ -37,64 +73,28 @@ int main() {
     }
 
     string line;
-    int total_sum = 0;
-    const int base = 10;
+    int totalSum = 0;
+    const int BASE = 10;
 
     while (getline(file, line)) {
         cout << "Processing line: " << line << endl;
 
-        int first_digit = -1;
-        int last_digit = -1;
+        int firstDigit = -1;
+        int lastDigit = -1;
 
-        // First digit
-        for (int i = 0; i < line.length(); ++i) {
-            string word;
-            for (int j = i; j < line.length(); ++j) {
-                word += line[j];
-                cout << "  Word: " << word << endl;
-                int digit = get_digit(word);
-                if (digit != -1) {
-                    first_digit = digit;
-                    cout << "  Detected digit: " << word << " -> " << first_digit << endl;
-                    i = j;  // Skip the characters already processed
-                    break;
-                }
-            }
-            if (first_digit != -1) {
-                break;
-            }
+        findFirstDigit(line, firstDigit);
+        findLastDigit(line, lastDigit);
+
+        if (firstDigit != -1 && lastDigit != -1) {
+            int calibrationValue = firstDigit * BASE + lastDigit;
+            cout << "  Calibration value: " << calibrationValue << endl;
+            totalSum += calibrationValue;
         }
 
-        // Last digit
-        for (int i = line.length() - 1; i >= 0; --i) {
-            string word;
-            for (int j = i; j >= 0; --j) {
-                word = line[j] + word;
-                cout << "  Word: " << word << endl;
-                int digit = get_digit(word);
-                if (digit != -1) {
-                    last_digit = digit;
-                    cout << "  Detected digit: " << word << " -> " << last_digit << endl;
-                    i = j - 1;  // Skip the characters already processed
-                    break;
-                }
-            }
-            if (last_digit != -1) {
-                break;
-            }
-        }
-
-        // Summation
-        if (first_digit != -1 && last_digit != -1) {
-            int calibration_value = first_digit * base + last_digit;
-            cout << "  Calibration value: " << calibration_value << endl;
-            total_sum += calibration_value;
-        }
-
-        cout << endl; // Add a new line for better readability
+        cout << endl;
     }
 
-    cout << "Total sum of calibration values: " << total_sum << endl;
+    cout << "Total sum of calibration values: " << totalSum << endl;
 
     file.close();
 
