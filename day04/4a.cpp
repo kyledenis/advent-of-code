@@ -15,6 +15,7 @@ using namespace std;
 constexpr char NUMBER_SEPARATOR = '|';
 constexpr char ENTRY_DELIMITER = ':';
 
+// Parses a line of text into winning numbers and your numbers
 bool parseLine(const string& line, vector<int>& winningNumbers, vector<int>& yourNumbers) {
     size_t colonPos = line.find(ENTRY_DELIMITER);
     if (colonPos == string::npos) {
@@ -28,6 +29,7 @@ bool parseLine(const string& line, vector<int>& winningNumbers, vector<int>& you
         return false;
     }
 
+    // Extract winning numbers and your numbers from the line
     istringstream winningStream(line.substr(colonPos + 2, delimiterPos - colonPos - 2));
     istringstream yourStream(line.substr(delimiterPos + 2));
 
@@ -42,17 +44,22 @@ bool parseLine(const string& line, vector<int>& winningNumbers, vector<int>& you
     return true;
 }
 
+// Calculates the points based on the matching numbers between winning numbers and your numbers
 int calculatePoints(const vector<int>& winningNumbers, const vector<int>& yourNumbers) {
+    // Convert winning numbers to a set for efficient look-up
     unordered_set<int> winningSet(winningNumbers.begin(), winningNumbers.end());
     int matches = 0;
+    // Count how many of your numbers are in the winning set
     for (int number : yourNumbers) {
         if (winningSet.count(number) > 0) {
             matches++;
         }
     }
+    // Calculate points as 2^(matches - 1), or 0 if no matches
     return matches > 0 ? pow(2, matches - 1) : 0;
 }
 
+// Prints a list of numbers with a label
 void printNumbers(const string& label, const vector<int>& numbers) {
     cout << label << ": ";
     for (int num : numbers) {
@@ -70,21 +77,23 @@ int main() {
 
     long long totalPoints = 0;
     string line;
+    // Read each line from the file and process it
     while (getline(file, line)) {
         vector<int> winningNumbers, yourNumbers;
         if (!parseLine(line, winningNumbers, yourNumbers)) {
-            continue;
+            continue; // Skip line if parsing fails
         }
 
         int points = calculatePoints(winningNumbers, yourNumbers);
-        totalPoints += points;
+        totalPoints += points; // Accumulate points from each line
 
+        // Print the numbers and points for each line
         printNumbers("Winning numbers", winningNumbers);
         printNumbers("Your numbers", yourNumbers);
         cout << "Matches: " << points <<
         "\nPoints: " << points << "\n" << endl;
     }
 
-    cout << "Total points: " << totalPoints << endl;
+    cout << "Total points: " << totalPoints << endl; // Print the total points after processing all lines
     return 0;
 }
