@@ -77,6 +77,7 @@ int main() {
 
     long long totalPoints = 0;
     string line;
+    
     // Read each line from the file and process it
     while (getline(file, line)) {
         vector<int> winningNumbers, yourNumbers;
