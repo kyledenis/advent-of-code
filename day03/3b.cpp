@@ -27,6 +27,7 @@ int extractPartNumber(const vector<string>& schematic, int& row, int& col) {
     return stoi(schematic[row].substr(startCol, endCol - startCol));
 }
 
+// Returns adjacent part numbers from the current position, updating the visited set.
 vector<int> getAdjacentPartNumbers(const vector<string>& schematic, int row, int col, set<pair<int, int>>& visited) {
     vector<int> partNumbers;
 
@@ -48,7 +49,7 @@ vector<int> getAdjacentPartNumbers(const vector<string>& schematic, int row, int
     return partNumbers;
 }
 
-// Calculates the sum of gear ratios in the schematic
+// Calculates the total gear ratio sum for gears identified in the schematic.
 long long calculateGearRatioSum(const vector<string>& schematic) {
     long long totalGearRatio = 0;
     set<pair<int, int>> visited;
