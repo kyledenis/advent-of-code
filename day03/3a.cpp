@@ -6,8 +6,52 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <cctype>
 
 using namespace std;
+
+// Check if the given position is adjacent to a symbol
+bool isAdjacentToSymbol(const vector<string>& schematic, int row, int col) {
+    const int rows = schematic.size();
+    const int cols = schematic[0].size();
+
+    for (int dx = -1; dx <= 1; dx++) {
+        for (int dy = -1; dy <= 1; dy++) {
+            if (dx == 0 && dy == 0) continue; // Skip the current cell
+
+            int adjacentRow = row + dx;
+            int adjacentCol = col + dy;
+
+            // Check boundaries
+            if (adjacentRow >= 0 && adjacentRow < rows && adjacentCol >= 0 && adjacentCol < cols) {
+                char adjacentChar = schematic[adjacentRow][adjacentCol];
+                if (adjacentChar != '.' && !isdigit(adjacentChar)) {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+// Calculate the part number starting from the given position
+int calculatePartNumber(const vector<string>& schematic, int row, int& col) {
+    const int cols = schematic[row].size();
+    int startCol = col;
+    while (startCol > 0 && isdigit(schematic[row][startCol - 1])) {
+        startCol--;
+    }
+
+    int endCol = col;
+    while (endCol < cols && isdigit(schematic[row][endCol])) {
+        endCol++;
+    }
+
+    // Adjust col to the end of the current part number to avoid re-evaluation
+    col = endCol - 1;
+
+    return stoi(schematic[row].substr(startCol, endCol - startCol));
+}
 
 int main() {
     vector<string> schematic;
@@ -19,61 +63,26 @@ int main() {
         while (getline(inputFile, line)) {
             schematic.push_back(line);
         }
-        inputFile.close();
     } else {
-        cout << "Unable to open file" << endl;
+        cerr << "Unable to open file" << endl;
         return 1;
     }
 
-    int rows = schematic.size();
-    int cols = schematic[0].size();
-    int sum = 0;
+    int totalPartNumbersSum = 0;
 
-    // Iterate over each character in the schematic
-    for (int i = 0; i < rows; i++) {
-        for (int j = 0; j < cols; j++) {
-            // Check if the current character is a digit
-            if (isdigit(schematic[i][j])) {
-                bool isPartNumber = false;
-                int partNumber = 0;
-
-                // Check adjacent cells for symbols
-                for (int dx = -1; dx <= 1; dx++) {
-                    for (int dy = -1; dy <= 1; dy++) {
-                        if (dx == 0 && dy == 0)
-                            continue;
-
-                        int nx = i + dx;
-                        int ny = j + dy;
-
-                        if (nx >= 0 && nx < rows && ny >= 0 && ny < cols) {
-                            if (schematic[nx][ny] != '.' && !isdigit(schematic[nx][ny])) {
-                                isPartNumber = true;
-                            }
-                        }
-                    }
-                }
-
-                // If it's a part number, calculate its value
-                if (isPartNumber) {
-                    int startCol = j;
-                    while (startCol > 0 && isdigit(schematic[i][startCol - 1])) {
-                        startCol--;
-                    }
-                    int endCol = j;
-                    while (endCol < cols - 1 && isdigit(schematic[i][endCol + 1])) {
-                        endCol++;
-                    }
-
-                    partNumber = stoi(schematic[i].substr(startCol, endCol - startCol + 1));
-                    sum += partNumber;
-                    j = endCol;
-                }
+    // Iterate over each row in the schematic
+    for (int row = 0; row < schematic.size(); row++) {
+        // Iterate over each column in the current row
+        for (int col = 0; col < schematic[row].size(); col++) {
+            // Check if the current character is a digit and is adjacent to a symbol
+            if (isdigit(schematic[row][col]) && isAdjacentToSymbol(schematic, row, col)) {
+                // Calculate the part number and add it to the total sum
+                totalPartNumbersSum += calculatePartNumber(schematic, row, col);
             }
         }
     }
 
-    cout << "Sum of all part numbers: " << sum << endl;
+    cout << "Sum of all part numbers: " << totalPartNumbersSum << endl;
 
     return 0;
 }
